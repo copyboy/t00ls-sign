@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--    会输出 /tmp/spring.log,但是已经生成了相关文件,不需要使用之前的文件了-->
+<!--    	<include resource="org/springframework/boot/logging/logback/base.xml" />-->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation" level="DEBUG" />
+    <logger name="org.springframework.jdbc" level="DEBUG" />
+<!--    <logger name="org.springframework.web.client" level="DEBUG" />-->
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="appName"/>
+    <springProperty scope="context" name="rootLevel" source="logging.level.root" defaultValue="INFO"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %-5level [%-18.18thread] %-36logger{36}[%line] : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}/logs/error-${appName}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${user.dir}/logs/error-${appName}-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5level [%-18.18thread] %-36logger{36}[%line] : %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}/logs/${appName}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${user.dir}/logs/${appName}-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5level [%-18.18thread] : %msg%n</pattern>
+            <pattern>%d %-5level [%-18.18thread] %-36logger{36}[%line] : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="${rootLevel}">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ERROR-FILE"/>
+    </root>
+</configuration>
